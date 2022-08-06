@@ -29,7 +29,7 @@ $server = $_SERVER['HTTP_ORIGIN'];
 //   echo"<pre>";
 // print_r($_SESSION);
 
-///------------       Render php array to HTML        ----------------////////////// 
+///------------       Render php array to HTML        ----------------//////////////  
 $foreach = function ($arr, $param) {
 	$result = '';
 	foreach ($arr as $key => $value) {
