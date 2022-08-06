@@ -1,0 +1,723 @@
+    
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css"> 
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css" integrity="sha512-1sCRPdkRXhBV2PBLUdRb4tMg1w2YPf37qatUFeS7zlBy7jJI8Lf4VHwWfZZfpXtYSLy85pkm9GaYVYMfw5BC1A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+                <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker3.css" />
+         <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+                <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+        
+                <script src="https://kit.fontawesome.com/0e3976740b.js" crossorigin="anonymous"></script>
+                <script src="//maps.googleapis.com/maps/api/js?v=3.exp&libraries=places&key=AIzaSyBBE53xDKH93kCWSWREyehlzH8N_t2R2lw"></script>
+        <script>
+        const isNumericInput = (event) => {
+                    const key = event.keyCode;
+                    return ((key >= 48 && key <= 57) || // Allow number line
+                        (key >= 96 && key <= 105) // Allow number pad
+                    );
+                };
+
+                const isModifierKey = (event) => {
+                    const key = event.keyCode;
+                    return (event.shiftKey === true || key === 35 || key === 36) || // Allow Shift, Home, End
+                        (key === 8 || key === 9 || key === 13 || key === 46) || // Allow Backspace, Tab, Enter, Delete
+                        (key > 36 && key < 41) || // Allow left, up, right, down
+                        (
+                            // Allow Ctrl/Command + A,C,V,X,Z
+                            (event.ctrlKey === true || event.metaKey === true) &&
+                            (key === 65 || key === 67 || key === 86 || key === 88 || key === 90)
+                        )
+                };
+
+                const enforceFormat = (event) => {
+                    // Input must be of a valid number format or a modifier key, and not longer than ten digits
+                    if(!isNumericInput(event) && !isModifierKey(event)){
+                        event.preventDefault();
+                    }
+                };
+
+                const formatToPhone = (event) => {
+                    if(isModifierKey(event)) {return;}
+
+                    // I am lazy and don't like to type things more than once
+                    const target = event.target;
+                    const input = event.target.value.replace(/\D/g,'').substring(0,10); // First ten digits of input only
+                    const zip = input.substring(0,3);
+                    const middle = input.substring(3,6);
+                    const last = input.substring(6,10);
+
+                    if(input.length > 6){target.value = `(${zip}) ${middle} - ${last}`;}
+                    else if(input.length > 3){target.value = `(${zip}) ${middle}`;}
+                    else if(input.length > 0){target.value = `(${zip}`;}
+                };
+
+                const inputElement = document.getElementById('phnum');
+                inputElement.addEventListener('keydown',enforceFormat);
+                inputElement.addEventListener('keyup',formatToPhone);
+        $(document).ready(function() {
+                var date_input = $('input[name="date"]'); //our date input has the name "date"
+                var date_input2 = $('input[name="date2"]'); //our date input has the name "date"
+                var date_input3 = $('input[name="date3"]'); //our date input has the name "date"
+                var container = $('.bootstrap-iso form').length > 0 ? $('.bootstrap-iso form').parent() : "body";
+                var options = {
+                    format: 'mm/dd/yyyy',
+                    container: container,
+                    todayHighlight: true,
+                    autoclose: true,
+                };
+                date_input.datepicker(options);
+                date_input2.datepicker(options);
+                date_input3.datepicker(options);
+
+
+
+                
+
+            })
+            
+
+        function PerformAutomation(){
+            var pname =  $('#pname').val();
+            if(pname != ''){ 
+                $.post("../../fetchdata_patient1.php", {pname: ""+pname}, function(data){
+                    if(data.length > 0) {
+                    var fetchedData = data;
+                    formvals = new Array();	 
+                    formvals = fetchedData.split('^'); 
+                    
+                          if(formvals.length > 0){
+                                    if(formvals[0] != '')
+                                      $('#pname').val(formvals[0]);
+                                      if(formvals[1] != '')							  
+                                      $('#phnum').val(formvals[1]);
+                                      if(formvals[3] != '')						  
+                                      $('#dob1').val(formvals[3]);
+                                      if(formvals[4] != '')					  
+                                      $('#claim_no').val(formvals[4]);
+                                      if(formvals[5] != '')	$('#patient_weight').val(formvals[5]);
+                                    if(formvals[8] != '')	$('#apptimerad').val(formvals[8]);
+                                    if(formvals[9] != '')	$('#org_apptimerad').val(formvals[9]);
+                                    if(formvals[10] != '')	$('#returnpickuprad').val(formvals[10]);  
+                                    if(formvals[11] != '')	$('#charges').val(formvals[11]); //alert(formvals[11]);
+                                       if(formvals[15] != '')  $('#autocomplete').val(formvals[15]); 	 						  
+                                      if(formvals[19] != '')	$('#autocomplete2').val(formvals[19]); 						  
+                                      if(formvals[23] != '')	$('#autocomplete3').val(formvals[23]);						  
+                                      if(formvals[51] != '')  $('#picklocation').val(formvals[51]);
+                                    if(formvals[52] != '')  $('#droplocation').val(formvals[52]);
+                                    if(formvals[53] != '')  $('#backtolocation').val(formvals[53]);
+                                    if(formvals[54] != '')  $('#account').val(formvals[54]);
+                                    
+                                    if(formvals[55] != '')  $('#psuiteroom').val(formvals[55]);
+                                    if(formvals[56] != '')  $('#dsuiteroom').val(formvals[56]);
+                                    if(formvals[57] != '')  $('#bsuiteroom').val(formvals[57]);
+                                    
+                                    if(formvals[43] != '')  $('#pickup_instruction').val(formvals[43]);								  
+    
+                
+                                      if(formvals[27] != ''){							  
+                                      $('#appdate').val(formvals[27]); 
+                                      }
+                                      if(formvals[29] != ''){
+                                            if(formvals[29] == '00:00:00'){
+                                               pUchoice('Will Call');
+                                               $('#puchoice').val('Will Call');
+                                            }else{					
+                                             $('#puchoice').val('Time');		  
+                                             $('#returnpickup').val(formvals[29]); 
+                                             $('#returnpickup').attr("class","txt_box required");	
+                                             $('#rpTime').show();
+                                              }
+                                         }	
+                                         if(formvals[30] != ''){  $('#casemanager1').val(formvals[30]);	 }
+                                          if(formvals[31] != ''){ $('#comments').val(formvals[31]); 	 }	
+                                         if(formvals[32] != ''){  $('#insurance_name').val(formvals[32]); }
+                                         if(formvals[33] != ''){  $('#ssn').val(formvals[33]);  }
+                                         if(formvals[34] != ''){  $('#type').val(formvals[34]); }
+                                         
+                                         
+                                         if(formvals[35] != ''){  $('#triptype').val(formvals[35]); }
+                                         if(formvals[36] != ''){  $('#vehtype').val(formvals[36]); }
+                                         if(formvals[38] != ''){  $('#apptime').val(formvals[38]); 
+                                         
+                                         /*t=formvals[38];
+                                            if(t){ 
+                                                    var res = t.split(":"); 
+                                                    var hours=((Number(res[0])+1));
+                                                    var ziro="0";
+                                                    if(hours<10){hours = ziro+hours; } 
+                                                    var minutes=res[1]; 
+                                                    $('#org_apptime').val(hours+':'+minutes); 
+                                                                }*/ }
+                                         if(formvals[37] != ''){  $('#org_apptime').val(formvals[37]); }
+                                         
+                                         if(formvals[39] != ''){
+                                             if(formvals[39] ='Male'){$('#sex1').attr("checked", true); }
+                                            else{$('#sex2').attr("checked", true);}
+                                                               }
+                                        if(formvals[41] != ''){  $('#cisid').val(formvals[41]); }
+                                    //	if(formvals[42] != ''){  $('#hostpital_id').val(formvals[42]); }
+                                        if(formvals[43] != ''){  $('#pickup_instruction').val(formvals[43]); }
+                                        if(formvals[44] != ''){  if(formvals[44] == 'Yes') $("#stretcher").attr("checked", true); }
+                                        if(formvals[45] != ''){  if(formvals[45] == 'Yes') $('#dstretcher').attr("checked", true); }
+                                        if(formvals[46] != ''){  if(formvals[46] == 'Yes')  $('#bar_stretcher').attr("checked", true); }
+                                        if(formvals[47] != ''){  if(formvals[47] == 'Yes')  $('#escort').attr("checked", true); }
+                                        if(formvals[48] != ''){  if(formvals[48] == 'Yes')  $('#wchair').attr("checked", true); }
+                                        if(formvals[49] != ''){  if(formvals[49] == 'Yes')  $('#dwchair').attr("checked", true); }
+                                        if(formvals[50] != ''){  if(formvals[50] == 'Yes')  $('#oxygen').attr("checked", true); }						   	
+                                                               chTrip(formvals[35]);				 
+                                     }
+                   }   
+               });
+          return true;
+          }
+     }
+       
+            
+            function chTrip(a){
+                
+                if(a=='Round Trip'){
+                    document.getElementById('return').style.display="block";
+                    document.getElementById('rpu').style.display="block";
+                    document.getElementById('rpu2').style.display="block";
+                }
+                if(a=='Three Way'){
+                    document.getElementById('rpu').style.display="block";
+                    document.getElementById('rpu2').style.display="block";
+                    document.getElementById('3rd').style.display="block";
+                    document.getElementById('return').style.display="block";
+                }
+                if(a=='Four Way'){
+                    document.getElementById('rpu').style.display="block";
+                    document.getElementById('rpu2').style.display="block";
+                    document.getElementById('3rd').style.display="block";
+                    document.getElementById('4th').style.display="block";
+                    document.getElementById('return').style.display="block";
+                }
+                if(a=='One Way'){
+                    document.getElementById('rpu').style.display="none";
+                    document.getElementById('rpu2').style.display="none";
+                    document.getElementById('3rd').style.display="none";
+                    document.getElementById('4th').style.display="none";
+                    document.getElementById('return').style.display="none";
+                }
+            }
+            function Fill(a){
+                if($(a).is(":checked")){
+                    pick_loc = $("#picklocation").val();
+                    p_address = $("#pickaddress").val();
+                    p_room = $("#psuiteroom").val();
+                    p_instr = $("#pickup_instruction").val();
+                   
+                        $("#backtolocation").val(pick_loc);
+                        $("#backtolocation").text(pick_loc);
+                        $("#autocomplete3").val(p_address);
+                        $("#autocomplete3").text(p_address);
+                        $("#bsuiteroom").val(p_room);
+                        $("#bsuiteroom").text(p_room);
+                        $("#backto_instruction").val(p_instr);
+                        $("#backto_instruction").text(p_instr);
+
+                        
+                    }else{
+                        $("#backtolocation").val('');
+                        $("#backtolocation").text('');
+                        $("#autocomplete3").val('');
+                        $("#autocomplete3").text('');
+                        $("#bsuiteroom").val('');
+                        $("#bsuiteroom").text('');
+                        $("#backto_instruction").val('');
+                        $("#backto_instruction").text('');
+                    }
+            }
+
+            
+           
+        </script>
+        <style>
+            #spanstyle{
+                background-color: rgba(65, 140, 150, 0.151);
+            }
+            a:focus, a:hover {
+                    color: #1d124d;
+                    text-decoration: none;
+                    cursor: pointer;
+                }
+                label{
+                    display: contents;
+                }
+        </style>
+   
+</head>
+
+<body>
+    <div class="container">
+    
+        <form id="contact-form" method="post" name="request_form" action="new.php" autocomplete="off">
+            <div class="form-row">
+                <div class="row">
+                    <div class="col-sm-12 "
+                        style="font-size:24px;margin-top:20px;text-align:center;background-image:linear-gradient(to right, red , blue);color:#fff;">
+                        New Trip Request</div>
+                </div>
+                <div class="row" style="margin-top:20px;margin-left:20px;">
+                    <!-- <div class="col-sm-6">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label
+                                    for="name">Account Name *</label></span>
+                            <select name="account"  id="account" required="required" class="form-control"autocomplete="off">
+                                {section name=n loop=$accounts}
+                                <option value="{$accounts[n].id}" {if $accounts[n].id eq $post.account}selected{/if}> {$accounts[n].account_name} </option>
+                                    {/section}
+                            </select>
+                        </div>
+                    </div> -->
+                    <div class="col-sm-5">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label
+                                    for="pname">Patient Name *</label></span>
+                            <input type="text" name="pname" class="form-control" id="pname" value="" placeholder="Patient Name"  maxlength="50" autocomplete="off"  onKeyUp="searchSuggest();">
+                            <div id="layer1"></div>
+                            </div>
+                    </div>
+                    <div class="col-sm-1">
+                        <div class="input-group fa-3x" style="padding-top: 5px;">
+                            <span style="font-size: 24px;color:#F00"><a style="color: #a40026;text-decoration: none;"
+                                    href="#" onclick="PerformAutomation()"><i class="fas fa-arrow-right" style="vertical-align: top;"></i></a></span>
+
+                        </div>
+                    </div>
+
+
+                    <div class="col-sm-6" style="margin-top: 20px;">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label
+                                    for="phnum">Patient Phone No *</label></span>
+                            <input type="text" name="phnum" class="form-control" id="phnum" placeholder="Phone Number" maxlength="16" />
+                        </div>
+                    </div>
+                    <div class="col-sm-6" style="margin-top: 20px;">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle" style=""><label
+                                    for="name">PO #</label></span>
+                            <input type="text" name="po" class="form-control" id="po" placeholder="Postal Address">
+                        </div>
+                    </div>
+                    <div class="col-sm-6" style="margin-top: 20px;">
+                        <div class="input-group">
+                            <!-- Date input -->
+                            <label class="input-group-addon" id="spanstyle"
+                                for="dob">Date</label>
+                            <input class="form-control" id="dob1" name="dob" placeholder="MM/DD/YYY" type="text" />
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="margin-top:20px;margin-left:20px;">
+                    <div class="col-sm-6">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label
+                                    for="triptype">Select Trip Type *</label></span>
+                            <select name="triptype" id="triptype" class="form-control" onchange="return chTrip(this.value);">
+                                <option value="One Way">One Way--(1 Destination) </option>
+                                <option value="Round Trip">Two Way--(Round Trip) </option>
+                                <option value="Three Way">Three Way--(3 Destinations) </option>
+                                <option value="Four Way">Four Way--(4 Destinations) </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label
+                                    for="triptype">Vehicle Preference *</label></span>
+                            <select name="vehtype" id="vehtype" required="required"
+                                class="form-control" onchange="bringlocations(this.value,this)"
+                                onkeypress="return disableEnterKey(event)" autocomplete="off">
+                                	
+
+                                <option value=""></option>
+                                
+                                
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-6" style="margin-top: 20px;">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label
+                                    for="oxygen">Oxygen Needed ?</label></span>
+                            <select name="oxygen" id="oxygen" required="required" class="form-control">
+                                <option value="no">No </option>
+                                <option value="yes">Yes </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-6" style="margin-top: 20px;">
+                        <div class="input-group">
+                            <!-- Date input -->
+                            <label class="input-group-addon" id="spanstyle"
+                                for="appointment_date">Appointment Date *</label>
+                            <input class="form-control" id="appdate" name="appdate" placeholder="MM/DD/YYY" type="text" />
+                        </div>
+                    </div>
+
+
+                    <div class="col-sm-6" style="margin-top: 20px;">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label
+                                    for="pnum">PickUp Time *</label></span>
+                            <input type="text" name="apptime" id="apptime" value="" class="form-control time"
+                                placeholder=" (e.g. 10:30 AM )" maxlength="8" required="required"
+                                onkeypress="return disableEnterKey(event)" onblur="return time(this.id);">
+                            <span class="input-group-addon" id="spanstyle">
+                                <select name="apptimerad" id="apptimerad">
+                                    <option value="am">AM</option>
+                                    <option value="pm">PM</option>
+                                </select>
+                            </span>
+                            <span class="input-group-addon" id="spanstyle"><a
+                                    onclick="CheckdriversAvailibility('driver_availibility.php','pick')"> Check Free
+                                    Drivers Time Slots</a>
+                            </span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6" style="margin-top: 20px;">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label
+                                    for="pnum">Appointment Time *</label></span>
+                            <input type="text" name="org_apptime" id="org_apptime" value="" class="form-control time"
+                                placeholder=" (e.g. 10:30 AM )" maxlength="8" required="required"
+                                onkeypress="return disableEnterKey(event)" onblur="return time(this.id);">
+                            <span class="input-group-addon" id="spanstyle">
+                                <select name="org_apptimerad" id="org_apptimerad">
+                                    <option value="am">AM</option>  
+                                    <option value="pm">PM</option>
+                                </select>
+                            </span>
+
+                        </div>
+                    </div>
+                    <div class="col-sm-6" id="rpu" style="margin-top: 20px; display:none;" >
+							<div class="input-group">
+							<span class="input-group-addon" id="spanstyle"><label>Return Pickup(For last destination)</label></span>
+							<select name="puchoice" id="puchoice" onchange="return pUchoice(this.value);" class="form-control" onkeypress="return disableEnterKey(event)">
+								<option value="Time">Time</option>
+                                <option value="Will Call">Will Call</option>
+							</select>
+							</div>
+					</div>
+                    <div class="col-sm-6" id="rpu2" style="margin-top: 20px; display:none;" >
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label
+                                    for="pnum">Return Pick Time *</label></span>
+                            <input type="text" name="returnpickup" id="returnpickup"  class="form-control time"
+                                placeholder="Return Pick Up Time" maxlength="8" required="required"
+                                onblur="return time(this.id);" onkeypress="return disableEnterKey(event)">
+                            <span class="input-group-addon" id="spanstyle">
+                                <select name="returnpickuprad" id="returnpickuprad">
+                                    <option value="am">AM</option>
+                                    <option value="pm">PM</option>
+                                </select>
+                            </span>
+                            <span class="input-group-addon" id="spanstyle"><a
+                                    onclick="CheckdriversAvailibility('driver_availibility.php','pick')"> Check Free
+                                    Drivers Time Slots</a>
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="row">
+                    <div class="col-sm-12 "
+                        style="font-size:24px;margin-top:20px;text-align:center;background-image:linear-gradient(to right, red , blue);color:#fff;">
+                        PickUp Information</div>
+                </div>
+                <div class="row" style="margin-top:20px;margin-left:20px;">
+                    <div class="col-sm-6">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label for="name">Pickup Location *</label></span>
+                            <input type="text" name="picklocation" class="form-control" id="picklocation"
+                                placeholder="PickUp Location">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label for="name">Pickup Address *</label></span>
+                            <input type="text" name="pickaddress" class="form-control" id="autocomplete"
+                                placeholder="PickUp Address">
+                        </div>
+                    </div>
+                    <div class="col-sm-6" style="margin-top: 20px;">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label for="name">Suite/Apt/Bld/Room *</label></span>
+                            <input type="text" name="psuiteroom" class="form-control" id="psuiteroom"
+                                placeholder="Suite/Apt/Bld/Room">
+                        </div>
+                    </div>
+                    <div class="col-sm-6" style="margin-top: 20px;">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label for="name">Destination Phone Number</label></span>
+                            <input type="text" name="d_phnum" class="form-control" id="d_phnum"
+                                placeholder="Destination Phone Number">
+                        </div>
+                    </div>
+                    <div class="col-sm-6" style="margin-top: 20px;">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label for="name">PickUp Instructions</label></span>
+                            <textarea name="pickup_instruction" id="pickup_instruction" class="form-control"
+                                placeholder="PickUp Instructions"></textarea>
+                        </div>
+                    </div>
+                    <div class="col-sm-6" style="margin-top: 20px;">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label for="name">PickUp Phone Number</label></span>
+                            <input type="text" name="p_phnum" class="form-control" id="p_phnum"
+                                placeholder="PickUp Phone Number">
+                        </div>
+                    </div>
+
+
+
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="row">
+                    <div class="col-sm-12 "
+                        style="font-size:24px;margin-top:20px;text-align:center;background-image:linear-gradient(to right, red , blue);color:#fff;">
+                        First Destination Address</div>
+                </div>
+                <div class="row" style="margin-top:20px;margin-left:20px;">
+                    <div class="col-sm-6">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label for="name">Drop Location *</label></span>
+                            <input type="text" name="droplocation" class="form-control" id="droplocation"
+                                placeholder="PickUp Location">
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label for="name">Drop Address *</label></span>
+                            <input type="text" name="destination" class="form-control" id="autocomplete2"
+                                placeholder="Drop Address">
+                        </div>
+                    </div>
+                    <div class="col-sm-6" style="margin-top: 20px;">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label for="name">Suite/Apt/Bld/Room *</label></span>
+                            <input type="text" name="dsuiteroom" class="form-control" id="dsuiteroom"
+                                placeholder="Suite/Apt/Bld/Room">
+                        </div>
+                    </div>
+                    <div class="col-sm-6" style="margin-top: 20px;">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label for="name">Destination Phone Number</label></span>
+                            <input type="text" name="d_phnum" class="form-control" id="d_phnum"
+                                placeholder="Destination Phone Number">
+                        </div>
+                    </div>
+                    <div class="col-sm-6" style="margin-top: 20px;">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label for="name">Destination Instructions</label></span>
+                            <textarea name="destination_instruction" id="destination_instruction" class="form-control"
+                                placeholder="Destination Instructions"></textarea>
+                        </div>
+                    </div>
+
+
+
+                </div>
+            </div>
+            <div class="form-row" id="3rd" style="display: none;">
+                <div class="row">
+                    <div class="col-sm-12 "
+                        style="font-size:24px;margin-top:20px;text-align:center;background-image:linear-gradient(to right, red , blue);color:#fff;">
+                        Second Destination Address</div>
+                </div>
+                <div class="row" style="margin-top:20px;margin-left:20px;">
+                    
+                    <div class="col-sm-6">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label for="three_pickup_time">2nd Pick Time *</span>
+                            <input class="form-control  time" type="text" name="three_pickup" id="three_pickup" value="" maxlength="5" onblur="javascript:time(this.id);" onkeypress="return disableEnterKey(event)">
+                            <span class="input-group-addon"><select name="three_pickuprad" id="three_pickuprad">
+                                <option value="am">AM</option><option value="pm">PM</option></select></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label for="name">Will Call *</label></span>
+                            <input type="checkbox" id="three_will_call"  name="three_will_call" aria-label="Checkbox for following text input" style="margin-left: 300px; width:40px; height:40px;">
+                        </div>
+                    </div>
+                    <div class="col-sm-6" style="margin-top: 20px;">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label for="name">2nd Destination Address *</label></span>
+                            <input type="text" name="droplocation2" class="form-control" id="droplocation2"
+                                placeholder="Drop Address">
+                        </div>
+                    </div>
+                    <div class="col-sm-6" style="margin-top: 20px;">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label for="name">2nd Destination Location *</label></span>
+                            <input type="text" name="destination2" class="form-control" id="destination2"
+                                placeholder="2nd Destination Location">
+                        </div>
+                    </div>
+                    <div class="col-sm-6" style="margin-top: 20px;">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label for="name">Suite/Apt/Bld/Room *</label></span>
+                            <input type="text" name="dsuiteroom2" class="form-control" id="dsuiteroom2"
+                                placeholder="Suite/Apt/Bld/Room">
+                        </div>
+                    </div>
+                    <div class="col-sm-6" style="margin-top: 20px;">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label for="name">2nd Destination Phone Number</label></span>
+                            <input type="text" name="d_phnum2" class="form-control" id="d_phnum2"
+                                placeholder="Destination Phone Number">
+                        </div>
+                    </div>
+                    <div class="col-sm-6" style="margin-top: 20px;">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label for="name">2nd Destination Instructions</label></span>
+                            <textarea name="destination_instruction2" id="destination_instruction2" class="form-control"
+                                placeholder="Destination Instructions"></textarea>
+                        </div>
+                    </div>
+
+
+
+                </div>
+            </div>
+            <div class="form-row" id = "4th" style="display:none">
+                <div class="row">
+                    <div class="col-sm-12 "
+                        style="font-size:24px;margin-top:20px;text-align:center;background-image:linear-gradient(to right, red , blue);color:#fff;">
+                        Third Destination Address</div>
+                </div>
+                <div class="row" style="margin-top:20px;margin-left:20px;">
+                    
+                    <div class="col-sm-6">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label for="three_pickup_time">3rd Pick Time *</span>
+                            <input class="form-control  time" type="text" name="four_pickup" id="four_pickup" value="" maxlength="5" onblur="javascript:time(this.id);" onkeypress="return disableEnterKey(event)">
+                            <span class="input-group-addon"><select name="four_pickuprad" id="four_pickuprad">
+                                <option value="am">AM</option><option value="pm">PM</option></select></span>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label for="name">Will Call *</label></span>
+                            <input type="checkbox" id="four_will_call"  name="four_will_call" aria-label="Checkbox for following text input" style="margin-left: 300px; width:40px; height:40px;">
+                        </div>
+                    </div>
+                    <div class="col-sm-6" style="margin-top: 20px;">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label for="name">3rd Destination Location *</label></span>
+                            <input type="text" name="droplocation3" class="form-control" id="droplocation3"
+                                placeholder="Drop Address">
+                        </div>
+                    </div>
+                    <div class="col-sm-6" style="margin-top: 20px;">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label for="name">3rd Destination Address *</label></span>
+                            <input type="text" name="destination3" class="form-control" id="destination3"
+                                placeholder="2nd Destination Location">
+                        </div>
+                    </div>
+                    <div class="col-sm-6" style="margin-top: 20px;">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label for="name">Suite/Apt/Bld/Room *</label></span>
+                            <input type="text" name="dsuiteroom3" class="form-control" id="dsuiteroom3"
+                                placeholder="Suite/Apt/Bld/Room">
+                        </div>
+                    </div>
+                    <div class="col-sm-6" style="margin-top: 20px;">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label for="name">3rd Destination Phone Number</label></span>
+                            <input type="text" name="d_phnum3" class="form-control" id="d_phnum3"
+                                placeholder="Destination Phone Number">
+                        </div>
+                    </div>
+                    <div class="col-sm-6" style="margin-top: 20px;">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label for="name">3rd Destination Phone Number</label></span>
+                            <textarea name="destination_instruction3" id="destination_instruction3" class="form-control"
+                                placeholder="Destination Instructions"></textarea>
+                        </div>
+                    </div>
+
+
+
+                </div>
+            </div>
+            <div class="form-row" id = "return" style="display:none">
+                <div class="row">
+                    <div class="col-sm-12 "
+                        style="font-size:24px;margin-top:20px;text-align:center;background-image:linear-gradient(to right, red , blue);color:#fff;">
+                        Last Destination Address</div>
+                </div>
+                <div class="row" style="margin-top:20px;margin-left:20px;">
+                    
+                    
+                    <div class="col-sm-10">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label for="name">Use Same Pickup Information</label></span>
+                            <input type="checkbox" id="sameadd"  name="sameadd" aria-label="Checkbox for following text input" onclick="Fill(this)" style="margin-left: 200px; width:40px; height:40px;">
+                        </div>
+                    </div>
+                    <div class="col-sm-6" style="margin-top: 20px;">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label for="name">Back To Location *</label></span>
+                            <input type="text" name="backtolocation" class="form-control" id="backtolocation"
+                                placeholder="Return Location">
+                        </div>
+                    </div>
+                    <div class="col-sm-6" style="margin-top: 20px;">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label for="name">Back To Address *</label></span>
+                            <input type="text" name="backto" class="form-control" id="autocomplete3"
+                                placeholder="Return Address">
+                        </div>
+                    </div>
+                    <div class="col-sm-6" style="margin-top: 20px;">
+                        <div class="input-group">
+                            <span class="input-group-addon" style="background-color: rgba(65, 140, 150, 0.151);    height: 50px;"><label for="name">Suite/Apt/Bld/Room *</label></span>
+                            <input type="text" name="bsuiteroom" class="form-control" style="height: 50px;" id="bsuiteroom"
+                                placeholder="Suite/Apt/Bld/Room">
+                        </div>
+                    </div>
+                    <div class="col-sm-6" style="margin-top: 20px;">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label for="name">Back to Instructions</label></span>
+                            <textarea name="backto_instruction" id="backto_instruction" class="form-control"
+                                placeholder="Destination Instructions"></textarea>
+                        </div>
+                    </div>
+
+
+
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="row">
+                    <div class="col-sm-12 "
+                        style="font-size:24px;margin-top:20px;text-align:center;background-image:linear-gradient(to right, red , blue);color:#fff;">
+                        Comments OR Notes</div>
+                </div>
+                <div class="row" style="margin-top:20px;margin-left:20px;">
+                    <div class="col-sm-12">
+                        <div class="input-group">
+                            <span class="input-group-addon" id="spanstyle"><label for="name">Comments *</label></span>
+                            <textarea name="comments" id="comments" class="form-control" rows="2" placeholder="Enter Trip Comments"></textarea>
+                        </div>  
+                    </div>
+                </div>
+            </div>
+            <div class="form-group" style="margin-top:20px; margin-left:50%;">
+                <button type="submit" name="submit" id="submit" value="submit" class="btn btn-primary btn-lg">Submit Request</button>
+				<!--<button type="reset" name="" class="btn btn-primary btn-lg" >Reset</button>-->
+		    </div>
+        </form>
+    </div>
+</body>
+
+</html>
